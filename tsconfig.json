@@ -26,6 +26,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "app/(auth)/signup",
     "app/(auth)/signup"
   ],
   "exclude": ["node_modules"]
