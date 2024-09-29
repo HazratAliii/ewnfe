@@ -1,6 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import axios from "axios";
+import Link from "next/link";
+import { ClipLoader } from "react-spinners";
 
 type SignupFormData = {
   email: string;
@@ -11,15 +14,29 @@ type SignupFormData = {
   confirmPassword: string;
 };
 
-const Signup: React.FC = () => {
+const Signup = () => {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignupFormData>();
 
-  const onSubmit: SubmitHandler<SignupFormData> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+    try {
+      setLoading(true);
+      const { email, password, givenName, familyName, language } = data;
+      const resp = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/signup`,
+        { email, password, givenName, familyName, language }
+      );
+      alert(resp.data.message);
+    } catch (err) {
+      // @ts-ignore
+      alert(err.response.data.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -129,8 +146,14 @@ const Signup: React.FC = () => {
           type="submit"
           className="w-1/2 h-[40px] rounded-sm bg-black text-white mt-5 mb-5"
         >
-          Signup
+          {!loading ? "Signup" : <ClipLoader color="#ffffff" size={20} />}
         </button>
+        <p>
+          Already have account?{" "}
+          <Link href="/signin" className="text-blue-600">
+            Signin
+          </Link>
+        </p>
         or
         <button className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white mt-5 mb-5 flex items-center justify-center">
           Sign up with Google
