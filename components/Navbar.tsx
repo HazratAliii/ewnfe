@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
 import Link from "next/link";
+import axios from "axios";
 
 const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
   const pathname = usePathname();
-  const authenticated = false;
+  const router = useRouter();
 
   const navItems = authenticated
     ? [
@@ -26,6 +28,28 @@ const Navbar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("token");
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      router.push("/signin");
+    } catch (err) {
+      alert("Something went wrong");
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      setAuthenticated(token !== null && token !== "");
+    }
+  }, []);
+
   return (
     <div className="relative w-full bg-[#ffffff] items-center justify-center h-[60px] lg:h-[86px]">
       <div className="flex w-full lg:w-2/3 mx-auto h-full items-center justify-between">
@@ -39,7 +63,12 @@ const Navbar = () => {
                 pathname === item.path ? "bg-black text-white" : ""
               } px-3 py-1 rounded`}
             >
-              <Link href={item.path}>{item.name}</Link>
+              {/* <Link href={item.path}>{item.name}</Link> */}
+              {item.name === "logout" ? (
+                <button onClick={handleLogout}>{item.name}</button>
+              ) : (
+                <Link href={item.path}>{item.name}</Link>
+              )}
             </span>
           ))}
         </div>
@@ -69,7 +98,17 @@ const Navbar = () => {
                 pathname === item.path ? "bg-white text-black" : ""
               } w-full px-3 py-2 rounded cursor-pointer`}
             >
-              <Link href={item.path}>{item.name}</Link>
+              {/* <Link href={item.path}>{item.name}</Link> */}
+              {item.name === "logout" ? (
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1 bg-black text-white rounded"
+                >
+                  {item.name}
+                </button>
+              ) : (
+                <Link href={item.path}>{item.name}</Link>
+              )}
             </span>
           ))}
         </div>

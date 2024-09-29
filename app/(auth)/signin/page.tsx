@@ -1,22 +1,52 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import axios from "axios";
+import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 type SigninFormData = {
   email: string;
   password: string;
 };
 
-const Signin: React.FC = () => {
+const Signin = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SigninFormData>();
 
-  const onSubmit: SubmitHandler<SigninFormData> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SigninFormData> = async (data) => {
+    try {
+      setLoading(true);
+      const resp = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/signin`,
+        data,
+        { withCredentials: true }
+      );
+      console.log(resp);
+      localStorage.setItem("token", resp.data.token);
+      router.push("/");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Something went wrong");
+      } else {
+        alert("An unexpected error occured");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleGoogleLogin = async () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/google/callback`;
+  };
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   return (
     <div
@@ -64,15 +94,17 @@ const Signin: React.FC = () => {
           type="submit"
           className="w-1/2 h-[40px] rounded-sm bg-black text-white mt-5 mb-5"
         >
-          Sign In
-        </button>
-
-        <p className="mb-5">or</p>
-
-        <button className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white flex items-center justify-center mb-10">
-          Sign in with Google
+          {!loading ? "Sign In" : <ClipLoader color="#ffffff" size={20} />}
         </button>
       </form>
+      <p className="mb-5">or</p>
+
+      <button
+        className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white flex items-center justify-center mb-10"
+        onClick={handleGoogleLogin}
+      >
+        Sign in with Google
+      </button>
     </div>
   );
 };
