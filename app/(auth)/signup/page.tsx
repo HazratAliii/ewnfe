@@ -26,6 +26,7 @@ const Signup = () => {
     try {
       setLoading(true);
       const { email, password, givenName, familyName, language } = data;
+      console.log(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/signup`);
       const resp = await axios.post(
         `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/signup`,
         { email, password, givenName, familyName, language }
