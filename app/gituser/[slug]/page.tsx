@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import RepoList from "@/components/RepoList";
@@ -17,12 +17,14 @@ const GitProfile = () => {
       <div className="min-h-screen">
         <div className="w-full bg-[#FFFFFF] mt-10 flex justify-around flex-col">
           <div className="mx-10">
-            <Image
-              width={200}
-              height={200}
-              src={searchParam.get("avatar") || "/avatar.png"}
-              alt="avatar"
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Image
+                width={200}
+                height={200}
+                src={searchParam.get("avatar") || "/avatar.png"}
+                alt="avatar"
+              />
+            </Suspense>
             <h1 className="text-xl ml-10">{username}</h1>
           </div>
           <div className="mx-10">

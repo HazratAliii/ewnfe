@@ -19,6 +19,7 @@ const Home = () => {
     __v: 0,
   });
   const searchParam = useSearchParams();
+  const token = searchParam.get("token");
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -53,13 +54,12 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    const token = searchParam.get("token");
     if (token) {
       fetchDataWithToken(token);
     } else {
       fetchData();
     }
-  }, [searchParam]);
+  }, [token]);
 
   return (
     <>
