@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
@@ -27,14 +27,26 @@ const Signin = () => {
         data,
         { withCredentials: true }
       );
+      console.log(resp);
+      localStorage.setItem("token", resp.data.token);
       router.push("/");
     } catch (err) {
-      // @ts-ignore
-      alert(err.response.data.message);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Something went wrong");
+      } else {
+        alert("An unexpected error occured");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const handleGoogleLogin = async () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/google/callback`;
+  };
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   return (
     <div
@@ -84,12 +96,15 @@ const Signin = () => {
         >
           {!loading ? "Sign In" : <ClipLoader color="#ffffff" size={20} />}
         </button>
-        <p className="mb-5">or</p>
-
-        <button className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white flex items-center justify-center mb-10">
-          Sign in with Google
-        </button>
       </form>
+      <p className="mb-5">or</p>
+
+      <button
+        className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white flex items-center justify-center mb-10"
+        onClick={handleGoogleLogin}
+      >
+        Sign in with Google
+      </button>
     </div>
   );
 };

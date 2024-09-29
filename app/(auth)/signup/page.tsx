@@ -32,11 +32,18 @@ const Signup = () => {
       );
       alert(resp.data.message);
     } catch (err) {
-      // @ts-ignore
-      alert(err.response.data.message);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Something went wrong");
+      } else {
+        alert("An unexpected error occured");
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/auth/google/callback`;
   };
 
   return (
@@ -154,11 +161,14 @@ const Signup = () => {
             Signin
           </Link>
         </p>
-        or
-        <button className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white mt-5 mb-5 flex items-center justify-center">
-          Sign up with Google
-        </button>
       </form>
+      or
+      <button
+        className="w-1/2 h-[40px] rounded-sm bg-[#4285F4] text-white mt-5 mb-5 flex items-center justify-center"
+        onClick={handleGoogleLogin}
+      >
+        Sign up with Google
+      </button>
     </div>
   );
 };
