@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
-const Profile = () => {
+const Home = () => {
   const [user, setUser] = useState({
     image: "",
     _id: "",
@@ -59,7 +59,7 @@ const Profile = () => {
     } else {
       fetchData();
     }
-  }, []);
+  }, [searchParam]);
 
   return (
     <>
@@ -103,4 +103,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Home;

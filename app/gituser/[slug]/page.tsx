@@ -26,7 +26,7 @@ const GitProfile = () => {
             <h1 className="text-xl ml-10">{username}</h1>
           </div>
           <div className="mx-10">
-            <h3 className="text-xl text-center my-10">First five Repos'</h3>
+            <h3 className="text-xl text-center my-10">First five Repos</h3>
             <RepoList username={username} />
           </div>
           <div className="mx-10">

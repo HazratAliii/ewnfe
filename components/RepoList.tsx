@@ -14,11 +14,7 @@ interface Repo {
   };
 }
 
-interface PropType {
-  username: String;
-}
-
-const RepoList: React.FC<PropType> = ({ username: username }) => {
+const RepoList = ({ username }: { username: string }) => {
   const [repos, setRepos] = useState<Repo[]>([]);
 
   // Display only the first 5 repositories
@@ -29,14 +25,14 @@ const RepoList: React.FC<PropType> = ({ username: username }) => {
         `https://api.github.com/users/${username}/repos`
       );
       setRepos(response.data);
-    } catch (err) {
+    } catch {
       alert("Something went wrong");
     }
   };
 
   useEffect(() => {
     fetchRepos();
-  }, [repos]);
+  });
   const displayedRepos = repos.slice(0, 5);
 
   return (
